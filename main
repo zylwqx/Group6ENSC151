@@ -11,6 +11,9 @@
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
+#include <list>
+#include <string>
+#include <cctype>
 
 using namespace std;
 
@@ -25,6 +28,22 @@ void scene2_1();
 void scene2_2();
 void scene2_3();
 void scene2_4();
+
+// void deckOfCards() {
+//     // create a standard deck of 52 playing cards
+//     list<string> deck;
+//     string suits[] = {"Hearts", "Diamonds", "Clubs", "Spades"};
+//     string ranks[] = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"};
+//     for (const string &suit : suits) {
+//         for (const string &rank : ranks) {
+//             deck.push_back(rank + " of " + suit);
+//         }
+//     }
+//     // shuffle the deck
+//     deck.sort([](const string &a, const string &b) {
+//         return rand() % 2;
+//     });
+// }
 
 void clrSn() {
     // Clear the console screen
