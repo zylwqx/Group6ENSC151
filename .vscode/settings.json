@@ -4,6 +4,7 @@
         "iostream": "cpp",
         "main": "cpp",
         "ostream": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "thread": "cpp"
     }
 }
