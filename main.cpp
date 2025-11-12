@@ -30,6 +30,7 @@ void signUp();
 void logIn();
 void registration();
 void menu();
+void excerciseTracker();
 
 void clrSn() {
     // Clear the console screen
@@ -203,6 +204,14 @@ void menu(){
             }
         }
     }
+}
+
+void excerciseTracker(){
+    int choice;
+    while(true){
+        cout << ""
+    }
+    menu();
 }
 
 int main() {
