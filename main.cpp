@@ -191,9 +191,10 @@ double oneRep(){
         cin >> choice;
         if(choice == 1){
             clrSn();
-        } else{
+        } else {
             break;
         }
+        
     }
     clrSn();
     return 0;
