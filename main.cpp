@@ -16,6 +16,8 @@
 #include <string>
 #include <cctype>
 #include <vector>
+#include <sstream>
+#include <fstream>
 
 using namespace std;
 
@@ -26,19 +28,75 @@ vector<double> userStats(3);
 vector<string> userInfo(2);
 vector<double> userBMI(2);
 
+struct userLogIn{
+    string username;
+    string password;
+    string system;
+    double height;
+    double weight;
+    double bmi;  
+};
+
+struct excercises{
+    string username;
+    string excercise;
+    int exWeight;
+    int exRep;
+};
+
+list<userLogIn> login;
+list<excercises> workout;
+
 void signUp();
 void logIn();
 void registration();
 void menu();
 void excerciseTracker();
 
+void close(){
+    ofstream logfile("login_information.txt", ios::app);
+    logfile << userInfo[0] << ' ' << userInfo[0] << ' ' << measureSystem << ' ' << userStats[0] << ' ' << userStats[1] << ' '  << userBMI[1] << '\n';
+    logfile.close();
+    exit(0);
+}
+
+void fileCheck(){
+    string line;
+    ifstream logfile("login_information.txt");
+    if (!logfile) {
+        ofstream logfile("login_information.txt");
+    } else{
+        while(getline(logfile, line)){
+            stringstream ss(line);
+            userLogIn lg;
+
+            ss >> lg.username;
+            ss >> lg.password;
+            ss >> lg.system;
+            ss >> lg.height;
+            ss >> lg.weight;
+            ss >> lg.bmi;
+
+            login.push_back(lg);
+            measureSystem = lg.system;
+            userInfo[0] = lg.username;
+            userInfo[1] = lg.password;
+            userStats[0] = lg.height;
+            userStats[1] = lg.weight;
+            userBMI[1] = lg.bmi;
+        }
+        logfile.close();
+    }
+}
+
 void clrSn() {
     // Clear the console screen
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+    // #ifdef _WIN32
+    //     system("cls");
+    // #else
+    //     system("clear");
+    // #endif
+    return;
 }
 
 double measurement(){
@@ -71,6 +129,7 @@ double calcBMI(){
     string result;
     int choice;
     string choice1;
+    cout << "Your previous BMI was: " << userBMI[1] << "\n "<<endl;
     while(true){
         if(measureSystem == "metric"){
             cout << "Enter your height (cm): " << endl;
@@ -82,7 +141,7 @@ double calcBMI(){
         } else if(measureSystem == "imperial"){
             cout << "Enter your height (ft in): " << endl;
             cin >> userStats[0] >> userStats[2];
-            cout << "Enter your weight (kg): " << endl;
+            cout << "Enter your weight (lbs): " << endl;
             cin >> userStats[1];
             userStats[0] = userStats[0] * 12 + userStats[2];
             userBMI[0] = (userStats[1] * .703) / (userStats[0] * userStats[0]) * 1000;
@@ -118,15 +177,15 @@ double calcBMI(){
 double oneRep(){
     clrSn();
     int choice;
-    double weight;
+    double repWeight;
     double reps;
     double oneRep;
     while(true){
         cout << "Weight of Working Set: " << endl;
-        cin >> weight;
+        cin >> repWeight;
         cout << "Amount of repititions: " << endl;
         cin >> reps;
-        oneRep = ( ( weight * reps ) / 30.48 ) + weight;
+        oneRep = ( ( repWeight * reps ) / 30.48 ) + repWeight;
         cout << "Your one rep max is: "<< fixed << setprecision(1) << oneRep << unitM << endl;
         cout << "\nWould you like to calculate again (1) or go back? (2)" << endl;
         cin >> choice;
@@ -144,30 +203,33 @@ void logIn(){
     string password;
     string name;
     while(true){
-        cout << "Please enter your username or email: " << endl;
+        cout << "Please enter your username: " << endl;
         cin >> name;
         cout << "Please enter a password: " << endl;
         cin >> password;
-        if(name == userInfo[0] && password == userInfo[1]){
-            clrSn();
-            break;
-        } else{
-            cout << "Invalid name or password" << endl;
+        for(int i = 0; i < 100; i++){
+            for(const userLogIn& lg : login){
+                if(name == userInfo[0] && password == userInfo[1]){
+                    clrSn();
+                    cout << "Welcome Back!" << endl;
+                    menu();
+                    break;
+                }
+            }
         }
+        
+        cout << "Invalid name or password" << endl;
     }
-    menu();
 }
 
 void signUp(){
     clrSn();
     string password;
     string name;
-    cout << "Please enter your username or email: " << endl;
-    cin >> name;
+    cout << "Please enter your username: " << endl;
+    cin >> userInfo[0];
     cout << "Please enter a password: " << endl;
-    cin >> password;
-    userInfo[0] = name;
-    userInfo[1] = password;
+    cin >> userInfo[1];
     clrSn();
     measurement();
 }
@@ -181,7 +243,7 @@ void registration(){
     } else if(choice == 2){
         logIn();
     } else if(choice == 3){
-        exit(0);
+        close();
     }
 }
 
@@ -206,15 +268,17 @@ void menu(){
     }
 }
 
-void excerciseTracker(){
-    int choice;
-    while(true){
-        cout << ""
-    }
-    menu();
-}
+// void excerciseTracker(){
+//     int choice;
+//     while(true){
+//         cout << ""
+//     }
+//     menu();
+// }
 
 int main() {
+    fileCheck();
+
     cout << "Welcome to SyncFit!" << endl;
     cout << "";
     registration();

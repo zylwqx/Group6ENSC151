@@ -5,6 +5,8 @@
         "main": "cpp",
         "ostream": "cpp",
         "iomanip": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "iosfwd": "cpp",
+        "fstream": "cpp"
     }
 }
