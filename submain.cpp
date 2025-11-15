@@ -21,12 +21,23 @@ void clrSn();
 void oneRep();
 void calcBMI();
 void save();
+void checkLoggedIn();
+void signOut();
 
 // arrays
 vector<string> loginInfo(2);
 vector<double> statInfo(2);
 vector<string> measureUnits(2);
 vector<string> measurementSystem(1);
+
+// global variables
+string logName;
+string logPass;
+string logSystem;
+
+string statName;
+double statH;
+double statM;
 
 // open/create files
 void fileInitialize(){
@@ -42,8 +53,11 @@ void fileInitialize(){
     if (!maxFile){
         ofstream maxFile("oneRepMax.txt");
     }
+    ifstream logStat("loggedInStatus.txt");
+    if (!maxFile){
+        ofstream logStat("loggedInStatus.txt");
+    }
 }
-
 
 // files
 struct logInformation{
@@ -60,6 +74,11 @@ struct statInformation{
 struct oneRM{
     string excercise;
     double max;
+};
+
+struct statusCheck{
+    string loggedInName;
+    string status;
 };
 
 // list
@@ -142,8 +161,8 @@ void signUp(){
 }
 
 void logIn(){
-    string testName;
     string testPass;
+    string testName;
     while(true){
         cout << "Please enter your username: " << endl;
         cin >> testName;
@@ -153,20 +172,13 @@ void logIn(){
         ifstream statFile("statInfo.txt");
         clrSn();
         bool found = false;
-        string logName;
-        string logPass;
-        string logSystem;
-
-        string statName;
-        double statH;
-        double statM;
 
         while (logFile >> logName >> logPass >> logSystem){
             if (testName == logName && testPass == logPass){
                 found = true;
                 cout << "Welcome Back!" << endl;
                 measurementSystem[0] = logSystem;
-                cout << measurementSystem[0];
+                loginInfo[0] = logName;
                 if(measurementSystem[0] == "metric"){
                     measureUnits[0] = "m";
                     measureUnits[1] = "kg";
@@ -206,7 +218,7 @@ void logIn(){
 void menu(){
     int choice;
     while(true){
-        cout << "Options:\n1) Calculate one rep max\n2) Calculate BMI\n3) Exit" << endl;
+        cout << "Options:\n1) Calculate one rep max\n2) Calculate BMI\n3) Exit\n4) Sign out" << endl;
         cin >> choice;
         while(true){
             if(choice == 1){
@@ -217,8 +229,13 @@ void menu(){
                 break;
             } else if(choice == 3){
                 save();
+                ofstream logStat("loggedInStatus.txt", ofstream::trunc);
+                logStat << loginInfo[0] << " true" << '\n';
+                logStat.close();
                 exit(0);
-            } else{
+            } else if(choice == 4){
+                signOut();
+            } else {
                 cout << "Invalid Choice" << endl;
             }
         }
@@ -226,11 +243,11 @@ void menu(){
 }
 
 void clrSn() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+    // #ifdef _WIN32
+    //     system("cls");
+    // #else
+    //     system("clear");
+    // #endif
     return;
 }
 
@@ -243,36 +260,65 @@ void oneRep(){
     double reps;
     double oneRep;
     bool save = false;
-
     while(true){
-        cout << "Weight of Working Set (" << measureUnits[1] << "): " << endl;
-        cin >> repWeight;
-        cout << "Amount of repititions: " << endl;
-        cin >> reps;
-        oneRep = ( ( repWeight * reps ) / 30.48 ) + repWeight;
-        cout << "Your one rep max is: "<< fixed << setprecision(1) << oneRep << measureUnits[1] << endl;
-        cout << "Would you like to save your oen rep max? (y/n)" << endl;
-        cin >> yn;
-        if(yn == "y"){
-            save = true;
-            cout << "What excercise is this?" << endl;
-            cin.ignore();
-            getline(cin, name);
+        cout << "1) Calculate for one rep max\n2) View one rep max(es)\n3) return" << endl;
+        cin >> choice;
+        if(choice == 1){
+            clrSn();
+            while(true){
+                cout << "Weight of Working Set (" << measureUnits[1] << "): " << endl;
+                cin >> repWeight;
+                cout << "Amount of repititions: " << endl;
+                cin >> reps;
+                oneRep = ( ( repWeight * reps ) / 30.48 ) + repWeight;
+                cout << "Your one rep max is: "<< fixed << setprecision(1) << oneRep << measureUnits[1] << endl;
+                cout << "Would you like to save your one rep max? (y/n)" << endl;
+                cin >> yn;
+                if(yn == "y"){
+                    save = true;
+                    cout << "What excercise is this?" << endl;
+                    cin.ignore();
+                    getline(cin, name);
+                }
+                if(save){
+                    ofstream maxFile("oneRepMax.txt", ios::app);
+                    maxFile << loginInfo[0] << ' ' << oneRep << ' ' << name << '\n';
+                    maxFile.close();
+                }   
+                clrSn();
+                cout << "\nWould you like to calculate again (1) or go back? (2)" << endl;
+                cin >> choice;
+                if(choice == 1){
+                    clrSn();
+                } else {
+                    clrSn();
+                    break;
+                }
+                break;
+            }
+        } else if(choice == 2){
+            clrSn();
+            string name;
+            string weight;
+            string excerciseName;
+            ifstream maxFile("oneRepMax.txt");
+            cout << "\n--- Your One Rep Maxes ---\n";
+            while (maxFile >> name >> weight) {
+                char c = maxFile.peek();
+                if (isspace(c)) {
+                    maxFile.ignore();
+                }
+                if (getline(maxFile, excerciseName)) {
+                    cout << excerciseName << ": " << weight << endl;
+                }
+            }
+            string re;
+            cout << "\nEnter 1 to return" << endl;
+            cin >> re;
+            clrSn();
+        } else{
+            return;
         }
-        if(save){
-            cout << loginInfo[0];
-            ofstream maxFile("oneRepMax.txt", ios::app);
-            maxFile << loginInfo[0] << ' ' << oneRep << ' ' << name << '\n';
-            maxFile.close();
-        }
-        // cout << "\nWould you like to calculate again (1) or go back? (2)" << endl;
-        // cin >> choice;
-        // if(choice == 1){
-        //     clrSn();
-        // } else {
-        //     break;
-        // }
-        break;
     }
 }
 
@@ -283,9 +329,14 @@ void calcBMI(){
     double BMI;
     double height;
     double weight;
+    cout << measurementSystem[0];
     if(measurementSystem[0] == "metric"){
+        cout << "calculating";
         BMI = statInfo[1] / (statInfo[0] * statInfo[0]);
-    } else {
+        cout << "Loaded Stats: " << statInfo[0] << " " << statInfo[1] << endl;
+    } else if(measurementSystem[0] == "imperial"){
+        cout << "calculating";
+        cout << "Loaded Stats: " << statInfo[0] << " " << statInfo[1] << endl;
         BMI = (statInfo[1] * .703)/ (statInfo[0] * statInfo[0]) * 1000;
     }
     cout << "Based on your previous stats, your BMI is: " << fixed << setprecision(2) << BMI << endl;
@@ -324,15 +375,8 @@ void calcBMI(){
             clrSn();
             break;
         }
-        cout << "Would you like to save your BMI? (y/n)" << endl;
-        cin >> choice;
-        if(choice == "y"){
-            statInfo[0] = height;
-            statInfo[1] = weight;
-        }
     }
 }
-
 
 void save(){
     // saving information
@@ -344,7 +388,55 @@ void save(){
     statFile.close();
 }
 
+void signOut(){
+    ofstream logStat("loggedInStatus.txt", ofstream::trunc);
+    logStat << loginInfo[0] << " false" << '\n';
+    logStat.close();
+    registration();
+}
+
+void checkLoggedIn(){
+    string loggedIn, loggedName;
+    ifstream statusCheck("loggedInStatus.txt");
+    ifstream logFile("logInfo.txt");
+    ifstream statFile("statInfo.txt");
+    while (statusCheck >> loggedName >> loggedIn){
+        if (loggedIn == "true"){
+            loginInfo[0] = loggedName;
+            cout << "Welcome Back " << loginInfo[0] <<"!" << endl;
+            break;
+        } else if(loggedIn == "false"){
+            registration();
+        }
+    }
+    while (logFile >> logName >> logPass >> logSystem){
+        cout << logName << " " << logPass << " " << logSystem;
+        if (loggedName == logName){
+            measurementSystem[0] = logSystem;
+            if(measurementSystem[0] == "metric"){
+            measureUnits[0] = "m";
+            measureUnits[1] = "kg";
+            } else {
+                measureUnits[0] = "ft in";
+                measureUnits[1] = "lbs";
+            }
+        }
+    }
+    while (statFile >> statName >> statH >> statM){
+        if (loggedName == statName){
+            statInfo[0] = statH;
+            statInfo[1] = statM;
+            cout << "Loaded Stats: " << statInfo[0] << " " << statInfo[1] << endl; // Added label for clarity
+            break;
+        }
+    }
+    statFile.close();
+    logFile.close();
+    menu();
+}
+
+
 int main(){
     fileInitialize();
-    registration();
+    checkLoggedIn();
 }
