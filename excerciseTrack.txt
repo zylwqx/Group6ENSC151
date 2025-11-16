@@ -1,0 +1,2 @@
+kevin Chest InclineDumbell 6 25
+kevin Chest Fly 6 50

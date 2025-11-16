@@ -7,6 +7,7 @@
         "iomanip": "cpp",
         "thread": "cpp",
         "iosfwd": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "typeinfo": "cpp"
     }
 }
