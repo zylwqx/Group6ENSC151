@@ -1,2 +1,6 @@
-kevin Chest InclineDumbell 6 25
-kevin Chest Fly 6 50
+kevin chest bench 12 25
+kevin chest bench 12 25
+kevin chest bench 12 25
+deanna chest bench 12 12.5
+deanna chest bench 12 12.5
+deanna chest bench 12 12.5

@@ -1,2 +1,3 @@
 kevin 1.68 75
 claire 150 55
+deanna 58 100

@@ -11,6 +11,29 @@
 
 using namespace std;
 
+// prototypes
+void registration();
+void signUp();
+void logIn();
+void menu();
+void fileInitialize();
+void loginCheck();
+void clrSn();
+void oneRep();
+void calcBMI();
+void save();
+void checkLoggedIn();
+void signOut();
+void loadExcersises();
+void saveExcersises();
+void loadSleep();
+void saveSleep();
+void excerciseTracker();
+void sleepTracker();
+void loadMacro();
+void saveMacro();
+void macroTracker();
+
 // open/create files
 void fileInitialize(){
     ifstream logFile("logInfo.txt");
@@ -37,15 +60,22 @@ void fileInitialize(){
     if (!sleepFile){
         ofstream sleepFile("sleepTrack.txt");
     }
+    ifstream macroFile("macroTrack.txt");
+    if (!macroFile){
+        ofstream macroFile("macroTrack.txt");
+    }
 }
 
 // files
 struct logInformation{
-    string name, pass, msys;
+    string name;
+    string pass;
+    string mSys;
 };
 
 struct statInformation{
-    double h, m;
+    double h;
+    double m;
 };
 
 struct oneRM{
@@ -54,7 +84,8 @@ struct oneRM{
 };
 
 struct statusCheck{
-    string loggedInName, status;
+    string loggedInName;
+    string status;
 };
 
 struct exTrack{
@@ -72,15 +103,11 @@ struct sleepTrack{
 };
 
 struct macroTrack{
-    string foodName;
-    double kCal, protein, fat, carb, fibre, gramsConsumed; 
-};
+    string food;
+    double calories;
+    double protien;   
 
-struct FoodItem {
-    string macroType, subCategory, name;
-    double kCal, protein, fat, carb, fibre;
 };
-
 // arrays
 vector<string> loginInfo(2);
 vector<double> statInfo(2);
@@ -88,14 +115,7 @@ vector<string> measureUnits(2);
 vector<string> measurementSystem(1);
 vector<exTrack> exList;
 vector<sleepTrack> sleepList;
-
-// prototypes
-void registration(); void signUp(); void logIn(); void signOut(); 
-void menu(); void oneRep(); void calcBMI();
-void excerciseTracker(); void sleepTracker();
-void loadExcersises(); void loadSleep();
-void saveExcersises(); void saveSleep(); 
-void fileInitialize(); void loginCheck(); void clrSn(); void save(); void checkLoggedIn();
+vector<macroTrack> macroList;
 
 // code
 void registration(){
@@ -277,11 +297,11 @@ void menu(){
 }
 
 void clrSn() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+    // #ifdef _WIN32
+    //     system("cls");
+    // #else
+    //     system("clear");
+    // #endif
     return;
 }
 
@@ -431,11 +451,10 @@ void loadExcersises() {
 
     string username;
     exTrack entry;
-
-    exList.clear();
     
     while (exFile >> username >> entry.split >> entry.excercise >> entry.reps >> entry.repWeight) {
         if (username == loginInfo[0]) { 
+            cout << "LOADED " << loginInfo[0] <<"'s Excercises!" << endl;
             exList.push_back(entry); 
         }
     }
@@ -477,25 +496,25 @@ void excerciseTracker() {
                 break;
             }
         } else if (choice == "2") {
-            clrSn();
-            exTrack newEntry;
-            cout << "Enter Split Name (e.g., ChestDay): " << endl;
-            cin >> newEntry.split;
-            cout << "Enter Exercise Name (No Spaces): " << endl;
-            cin >> newEntry.excercise;
-            cout << "Enter Reps: "; 
-            cin >> newEntry.reps;
-            cout << "Enter Weight (" << measureUnits[1] << "): "; 
-            cin >> newEntry.repWeight;
+                clrSn();
+                exTrack newEntry;
+                cout << "Enter Split Name (e.g., ChestDay): " << endl;
+                cin >> newEntry.split;
+                cout << "Enter Exercise Name (No Spaces): " << endl;
+                cin >> newEntry.excercise;
+                cout << "Enter Reps: "; 
+                cin >> newEntry.reps;
+                cout << "Enter Weight (" << measureUnits[1] << "): "; 
+                cin >> newEntry.repWeight;
 
-            exList.push_back(newEntry);
-            cout << "Exercise added successfully." << endl;
-        } else if (choice == "3") {
-            saveExcersises();
-            clrSn();
-            break;
-        } else {
-            cout << "Invalid choice. Please try again." << endl;
+                exList.push_back(newEntry);
+                cout << "Exercise added successfully." << endl;
+            } else if (choice == "3") {
+                saveExcersises();
+                clrSn();
+                break;
+            } else {
+                cout << "Invalid choice. Please try again." << endl;
         }
     }
 }
@@ -556,8 +575,6 @@ void loadSleep(){
     string username;
     sleepTrack entry;
 
-    sleepList.clear();
-
     while (sleepFile >> username >> entry.day >> entry.wakeT >> entry.sleepT >> entry.hours) {
         if (username == loginInfo[0]){
             sleepList.push_back(entry);
@@ -570,7 +587,7 @@ void saveSleep(){
     ofstream sleepFile("sleepTrack.txt", ofstream::trunc);
 
     for (const auto& entry : sleepList){
-        sleepFile << loginInfo[0] << ' ' << entry.day << ' ' << entry.sleepT << ' ' << entry.wakeT << ' ' << entry.hours << '\n';
+        sleepFile << loginInfo[0] << ' ' << entry.day << ' ' << entry.sleepT << ' ' << entry.wakeT << ' ' << entry.hours << endl;
     }
     sleepFile.close();
 }
@@ -619,7 +636,7 @@ void sleepTracker() {
             int wHour = newEntry.wakeT;
             double wMin = (newEntry.wakeT - wHour)*100;
 
-            int dHour = wHour+24 - sHour;
+            int dHour = wHour - (sHour - 12);
             double dMin = sMin - wMin;
 
             newEntry.hours = dHour - dMin/60;
@@ -633,6 +650,22 @@ void sleepTracker() {
             cout << "Invalid choice. Please try again." << endl;
         }
     }
+}
+
+void loadMacro(){
+    ifstream macroFile("macroTrack.txt");
+
+    string username;
+
+}
+
+void saveMacro(){
+    return;
+}
+
+void macroTracker(){
+    cout << "--- MACRO TRACKER ---" << endl;
+
 }
 
 int main(){
