@@ -370,7 +370,16 @@ void calcBMI(){
     } else if(measurementSystem[0] == "imperial"){
         BMI = (statInfo[1] * .703)/ (statInfo[0] * statInfo[0]) * 1000;
     }
-    cout << "Based on your previous stats, your BMI is: " << fixed << setprecision(2) << BMI << endl;
+    if(BMI <= 17){
+                result = "underweight";
+            } else if(BMI <= 25){
+                result = "normal";
+            } else if(BMI <= 30){
+                result = "overweight";
+            } else{
+                result = "obese";
+            }
+    cout << "Based on your previous stats, your BMI is: " << fixed << setprecision(2) << BMI << ". You are " << result <<"." << endl;
     while(true){
         cout << "Would you like to calculate a new BMI? (y/n)" << endl;
         cin >> choice;
