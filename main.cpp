@@ -644,7 +644,7 @@ void sleepTracker() {
     }
 }
 
-int main(){
+int main(){ 
     fileInitialize();
     checkLoggedIn();
 }
