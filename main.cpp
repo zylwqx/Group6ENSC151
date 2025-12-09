@@ -41,7 +41,7 @@ void fileInitialize(){
 
 // files
 struct logInformation{
-    string name, pass, msys;
+    string name, pass, msys, gender;
 };
 
 struct statInformation{
@@ -71,18 +71,18 @@ struct sleepTrack{
     double hours;
 };
 
-struct macroTrack{
-    string foodName;
-    double kCal, protein, fat, carb, fibre, gramsConsumed; 
-};
+// struct macroTrack{
+//     string foodName;
+//     double kCal, protein, fat, carb, fibre, gramsConsumed; 
+// };
 
-struct FoodItem {
-    string macroType, subCategory, name;
-    double kCal, protein, fat, carb, fibre;
-};
+// struct FoodItem {
+//     string macroType, subCategory, name;
+//     double kCal, protein, fat, carb, fibre;
+// };
 
 // arrays
-vector<string> loginInfo(2);
+vector<string> loginInfo(3);
 vector<double> statInfo(2);
 vector<string> measureUnits(2);
 vector<string> measurementSystem(1);
@@ -130,6 +130,10 @@ void signUp(){
     cout << "Please enter a password: " << endl;
     cin >> loginInfo[1];
     
+    // gender
+    cout << "Gender: " << endl;
+    cin >> loginInfo[2];
+
     // choosing a measurment system
     cout << "Which measurement system woudl you prefer?\n1) Metric\n2) Imperial" << endl;
     cin >> choice;
@@ -421,7 +425,7 @@ void calcBMI(){
 void save(){
     // saving information
     ofstream logFile("logInfo.txt", ios::app);
-    logFile << loginInfo[0] << ' ' << loginInfo[1] << ' ' << measurementSystem[0] << '\n';
+    logFile << loginInfo[0] << ' ' << loginInfo[1] << ' ' << measurementSystem[0] << ' ' << loginInfo[2] << '\n';
     logFile.close();
     ofstream statFile("statInfo.txt", ios::app);
     statFile << loginInfo[0] << ' ' << statInfo[0] << ' ' << statInfo[1] << '\n';
